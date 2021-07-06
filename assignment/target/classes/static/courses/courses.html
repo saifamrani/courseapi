@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome to the courses page</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+         function getData() {
+
+                console.log('getting data...');
+                    // Getting the data from backend.
+                    $.ajax({
+                        url: 'http://localhost:8080/api/course/all',
+                        type: 'get',
+                        success: function(data) {
+                            console.log('data get success');
+                            console.log(data);
+                            $('#courses').text('');
+                            var courseText = 'Available courses';
+                        //looping over data using JQuery.each 
+                        $.each (data, function (index , value){
+                            console.log (value);
+                            console.log(value.courseTitle + ' - '+ value.courseTeacher + ' - '+ value.courseLevel);
+                            courseText = courseText + value.courseTitle  + ' - ' + value.courseTeacher + ' - ' + value.courseLevel ; 
+                        });
+                    
+                        $('#courses').text (courseText);  
+                    } 
+                       
+
+            });
+        }
+        function postData(){
+        console.log ("posting data....");
+
+        if (!$("#courseTitle").val() || !$("#courseTeacher").val()|| !$("#courseLevel")){
+            console.log ("Title is empty")
+            $("error").text("some or all input field has no value");
+        } else{
+            var titleFromInput = $("#courseTitle").val();
+            var teacherFromInput = $("#courseTeacher").val();
+            var levelFromInput = $("#courseLevel").val();
+
+            console.log('Title ingevored' + titleFromInput);
+            console.log('Teacher ingevored' + teacherFromInput);
+            console.log('Niveau ingevored' + levelFromInput);
+
+              //java script varibles to javascript object.
+                var course = {
+                title :titleFromInput, teacher: teacherFromInput , level:levelFromInput };
+                console.log(course)
+
+            //converting java script varibles to javascript object.
+            var course = {
+             title :titleFromInput, 
+             teacher : teacherFromInput,
+             level : levelFromInput
+             };
+             console.log(course)
+
+              //converting Json to an object string.
+            var courseJson = JSON.stringify(course);
+                console.log(courseJson);
+                $.ajax({
+                url: 'http://localhost:8080/api/course/new',
+                type: 'put',
+                data: courseJson,
+                contentType:"application/json",
+                success: function(data) { 
+                    console.log('data post success'); 
+                }
+            });
+        }}
+        // using JQuery document . ready to make the data ready in the backend when the page is loading. 
+        $(document).ready(function(){
+            getData();
+        })
+    </script>
+</head>
+<body>
+    <h1>Courses</h1>
+<label for="courseTitle">Course Title</label></br>
+<input type="text" id="courseTitle" name="courseTitle">
+</br></br>
+<label for="courseTeacher">course Teacher</label></br>
+<input type="text" id="courseTeacher" name="courseTeacher">
+</br></br>
+<label for="courseLevel">Course Level</label></br>
+<input type="text" id="courseLevel" name="courseLevel">
+</br></br>
+<p id ="error"style="color: red;"></p>
+
+<button onclick="postData()">Add new Course !</button>
+</br></br>
+
+</br?> 
+<button onclick="getData()">Show available course !</button>
+
+<!-- Show the book in html -->
+<p id="courses">No data...</p>
+
+</body>
+</html> 
